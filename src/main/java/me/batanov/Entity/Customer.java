@@ -1,20 +1,41 @@
 package me.batanov.Entity;
 
-public class Customer {
-    private long id;
-    private String username, email;
+import javax.persistence.*;
 
-    public Customer(long id, String username, String email) {
-        this.id = id;
+@Entity
+@Table(name = "customer")
+public class Customer {
+    @Id
+    @Column(name = "id")
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
+    private long id;
+
+    @Column(name = "username")
+    private String username;
+    @Column(name = "email")
+    private String email;
+    @ManyToOne
+    private Organization organization;
+
+    protected Customer() {
+    }
+
+    public Customer(String username, String email, Organization organization) {
         this.username = username;
         this.email = email;
+        this.organization = organization;
+        organization.addCustomer(this);
+    }
+
+    public Organization getOrganization() {
+        return organization;
     }
 
     @Override
     public String toString() {
         return String.format(
-                "Customer[id=%d, username='%s', email='%s']",
-                id, username, email);
+                "Customer[id=%d, username='%s', email='%s', organization='%s']",
+                id, username, email, organization.toString());
     }
 
     public long getId() {
